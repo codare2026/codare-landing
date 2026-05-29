@@ -1468,11 +1468,10 @@ function launchApp() {
       const prevData = currentFoodDay ? JSON.stringify(gs(`food_${currentUser.id}_${currentFoodDay}`)) : null;
       await warmCache(currentUser.id);
       updateInboxBadge();
-      if (currentFoodDay) {
+if (currentFoodDay) {
         const newData = JSON.stringify(gs(`food_${currentUser.id}_${currentFoodDay}`));
         if (newData !== prevData) {
           document.getElementById('main-content').innerHTML = renderFoodEntry(currentFoodDay);
-          showToast('💬 營養師有新回饋！');
         }
       }
     } catch(e) {}
