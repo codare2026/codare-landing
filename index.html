@@ -1782,6 +1782,13 @@ function renderFoodList() {
 
 function openFoodDay(day) {
   currentFoodDay = day;
+  // 打開當天就標記已讀，紅點消失
+  const key = `food_${currentUser.id}_${day}`;
+  const existing = gs(key);
+  if (existing) {
+    existing.stuReadAt = new Date().toISOString();
+    ss(key, existing);
+  }
   document.getElementById('main-content').innerHTML = renderFoodEntry(day);
 }
 
@@ -1917,6 +1924,7 @@ const overallHTML = overallArr.length ? overallArr.map(fb => `
               <div style="max-width:80%">
                 <div style="font-size:11px;color:var(--gray-400);margin-bottom:3px;text-align:right">營養師
                   <span style="margin-left:4px">${msg.at ? new Date(msg.at).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}) : ''}</span>
+                  ${(!saved.stuReadAt || saved.stuReadAt < (msg.at||'')) ? '<span style="display:inline-block;width:7px;height:7px;background:#ef4444;border-radius:50%;margin-left:4px;vertical-align:middle"></span>' : ''}
                 </div>
                 ${msg.imgs?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;justify-content:flex-end">${msg.imgs.map(src => `<img src="${src}" onclick="openPhotoLightbox(['${src}'],0)" style="width:100px;height:100px;object-fit:cover;border-radius:8px;cursor:pointer">`).join('')}</div>` : ''} 
 <div style="background:var(--teal,#2db8b0);color:#fff;border-radius:12px 0 12px 12px;padding:10px 13px;font-size:14px;line-height:1.7;white-space:pre-wrap">${msg.text}</div>
@@ -2019,6 +2027,7 @@ function sendStudentReply(day) {
   if (!text) { showToast('請輸入回覆內容'); return; }
   const key = `food_${currentUser.id}_${day}`;
   const existing = gs(key) || {};
+  existing.stuReadAt = new Date().toISOString();
   const replies = Array.isArray(existing.studentReplies) ? existing.studentReplies : [];
   replies.push({ text, at: new Date().toISOString() });
   existing.studentReplies = replies;
@@ -2037,6 +2046,7 @@ function sendMealReply(day, mealKey) {
   if (!text) { showToast('請輸入回覆內容'); return; }
   const key = `food_${currentUser.id}_${day}`;
   const existing = gs(key) || {};
+  existing.stuReadAt = new Date().toISOString();
   const replies = Array.isArray(existing.studentReplies) ? existing.studentReplies : [];
   const mealLabel = { breakfast:'早餐', snack1:'上午點心', lunch:'午餐', snack2:'下午點心', dinner:'晚餐', latenight:'宵夜' };
   replies.push({ text: `【${mealLabel[mealKey]||mealKey}】${text}`, at: new Date().toISOString() });
