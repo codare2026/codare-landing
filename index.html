@@ -1871,7 +1871,9 @@ function renderFoodEntry(day) {
         <div class="img-preview-row" id="preview-${m.key}">${thumbs}</div>
         ${imgs.length > 0 ? `<div style="font-size:11px;color:var(--gray-400);margin-top:4px">${imgs.length} 張｜點照片右上角 ✕ 可刪除</div>` : ''}
       </div>
-      <textarea class="meal-textarea" id="meal-${m.key}" placeholder="例：堅果一小把、水果一份...">${saved[m.key] || ''}</textarea>
+      <textarea class="meal-textarea" id="meal-${m.key}" placeholder="例：堅果一小把、水果一份..."
+        oninput="localStorage.setItem('stu_draft_${currentUser.id}_${day}_${m.key}',this.value)"
+        >${localStorage.getItem(`stu_draft_${currentUser.id}_${day}_${m.key}`) || saved[m.key] || ''}</textarea>
       ${mealFbHTML}
       ${mealFbArr.length > 0 ? `
       <div style="display:flex;gap:8px;align-items:flex-end;margin-top:8px">
@@ -1997,7 +1999,7 @@ const overallHTML = overallArr.length ? overallArr.map(fb => `
     </div>
   </div>
 
-  <button class="save-btn" onclick="saveFoodDay('${day}')">💾 儲存紀錄</button>
+  <button class="save-btn" onclick="saveFoodDay('${day}')" style="background:#fff;color:var(--primary);border:2px solid var(--primary);box-shadow:none" onmousedown="this.style.background='linear-gradient(135deg,var(--primary),var(--primary-dark))';this.style.color='#fff'" onmouseup="this.style.background='#fff';this.style.color='var(--primary)'" ontouchstart="this.style.background='linear-gradient(135deg,var(--primary),var(--primary-dark))';this.style.color='#fff'" ontouchend="this.style.background='#fff';this.style.color='var(--primary)'">💾 儲存紀錄</button>
   <button class="notify-btn ${notified ? 'sent' : ''}" id="notify-btn" onclick="notifyRD('${day}')" style="margin-top:10px">
     ${notified ? '✅ 已通知營養師' : '🍎 完成紀錄後按我通知營養師～'}
   </button>
@@ -2183,6 +2185,9 @@ function saveFoodDay(day) {
   merged.hasData = hasAnyMeal || existing.hasData || false;
   merged.lastUpdated = new Date().toISOString();
   ss(`food_${currentUser.id}_${day}`, merged);
+  ['breakfast','snack1','lunch','snack2','dinner','latenight'].forEach(k => {
+    localStorage.removeItem(`stu_draft_${currentUser.id}_${day}_${k}`);
+  });
   showToast('✅ 紀錄已儲存！');
   return merged;
 }
