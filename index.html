@@ -1999,7 +1999,7 @@ const overallHTML = overallArr.length ? overallArr.map(fb => `
     </div>
   </div>
 
-  <button class="save-btn" onclick="saveFoodDay('${day}')" style="background:#fff;color:var(--primary);border:2px solid var(--primary);box-shadow:none" onmousedown="this.style.background='linear-gradient(135deg,var(--primary),var(--primary-dark))';this.style.color='#fff'" onmouseup="this.style.background='#fff';this.style.color='var(--primary)'" ontouchstart="this.style.background='linear-gradient(135deg,var(--primary),var(--primary-dark))';this.style.color='#fff'" ontouchend="this.style.background='#fff';this.style.color='var(--primary)'">💾 儲存紀錄</button>
+  <button class="save-btn" id="save-btn" onclick="saveFoodDay('${day}')" style="background:#fff;color:var(--primary);border:2px solid var(--primary);box-shadow:none">💾 儲存紀錄</button>
   <button class="notify-btn ${notified ? 'sent' : ''}" id="notify-btn" onclick="notifyRD('${day}')" style="margin-top:10px">
     ${notified ? '✅ 已通知營養師' : '🍎 完成紀錄後按我通知營養師～'}
   </button>
@@ -2188,6 +2188,14 @@ function saveFoodDay(day) {
   ['breakfast','snack1','lunch','snack2','dinner','latenight'].forEach(k => {
     localStorage.removeItem(`stu_draft_${currentUser.id}_${day}_${k}`);
   });
+  const saveBtn = document.getElementById('save-btn');
+  if (saveBtn) {
+    saveBtn.style.background = 'linear-gradient(135deg,var(--primary),var(--primary-dark))';
+    saveBtn.style.color = '#fff';
+    saveBtn.style.border = 'none';
+    saveBtn.innerHTML = '✅ 已儲存紀錄';
+    saveBtn.onclick = null;
+  }
   showToast('✅ 紀錄已儲存！');
   return merged;
 }
